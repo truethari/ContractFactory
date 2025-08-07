@@ -120,3 +120,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+*::-webkit-scrollbar-track {
+  border-radius: 15px;
+  background-color: #3e4142;
+}
+
+*::-webkit-scrollbar-track:hover {
+  background-color: #323435;
+}
+
+*::-webkit-scrollbar-track:active {
+  background-color: #292a2b;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #181818;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #000000;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background-color: #000000;
+}

@@ -6,6 +6,8 @@ import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 
 import { isGanache, RPC_URL } from "@/config";
 
+import { hyperevmMainnet, ganacheLocal } from "@/services/blockchain/networks";
+
 import type { AppKitNetwork } from "@reown/appkit-common";
 
 const projectId = "124231be92c2ac6686e0ef0110c2381c";
@@ -17,54 +19,9 @@ const metadata = {
   icons: ["https://assets.reown.com/reown-profile-pic.png"],
 };
 
-const hyperevmMainnet = {
-  id: 999,
-  caipNetworkId: "eip155:999",
-  chainNamespace: "eip155",
-  name: "Hyperliquid",
-  nativeCurrency: {
-    decimals: 18,
-    name: "HYPE",
-    symbol: "HYPE",
-  },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc.hyperliquid.xyz/evm"],
-      webSocket: ["wss://api.hyperliquid.xyz/ws"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Explorer",
-      url: "https://hyperliquid.cloud.blockscout.com",
-    },
-  },
-} as const;
-
-// Ganache local network configuration
-const ganacheLocal = {
-  id: 1337,
-  name: "Ganache",
-  nativeCurrency: {
-    decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
-  },
-  rpcUrls: {
-    default: {
-      http: [RPC_URL],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Ganache Explorer",
-      url: "http://localhost:8545",
-    },
-  },
-  testnet: true,
-} as const;
-
-const networks = isGanache ? [ganacheLocal] : [hyperevmMainnet];
+const networks = isGanache
+  ? [ganacheLocal, hyperevmMainnet]
+  : [hyperevmMainnet];
 
 // Log the network configuration
 console.log(
