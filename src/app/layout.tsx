@@ -1,8 +1,17 @@
 import "./globals.css";
 
 import React from "react";
-import { Fira_Sans } from "next/font/google";
+import {
+  Fira_Sans,
+  Silkscreen,
+  Iceberg,
+  Jersey_20,
+  Source_Code_Pro,
+  Press_Start_2P,
+} from "next/font/google";
 
+import AuthProvider from "@/components/providers/AuthProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import WalletProvider from "@/components/providers/WalletProvider";
 import AssetsProvider from "@/components/providers/AssetsProvider";
 
@@ -27,13 +36,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${firaSans.className} dark antialiased`}>
-        <WalletProvider>
-          <AssetsProvider>
-            {children}
-            <Toaster />
-          </AssetsProvider>
-        </WalletProvider>
+      <body
+        className={`${firaSans.className} dark relative leading-7 antialiased`}
+      >
+        <QueryProvider>
+          <WalletProvider>
+            <AssetsProvider>
+              <AuthProvider>
+                <div className="absolute inset-0 z-[-1] h-full w-full bg-gradient-to-br from-[#0a1114]/50 via-[#052e12]/50 to-[#033011] text-white" />
+                {children}
+                <Toaster />
+              </AuthProvider>
+            </AssetsProvider>
+          </WalletProvider>
+        </QueryProvider>
       </body>
     </html>
   );
