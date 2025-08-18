@@ -1,14 +1,7 @@
 import "./globals.css";
 
 import React from "react";
-import {
-  Fira_Sans,
-  Silkscreen,
-  Iceberg,
-  Jersey_20,
-  Source_Code_Pro,
-  Press_Start_2P,
-} from "next/font/google";
+import { Fira_Sans } from "next/font/google";
 
 import AuthProvider from "@/components/providers/AuthProvider";
 import QueryProvider from "@/components/providers/QueryProvider";

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import {
   Rocket,
   Download,
   Copy,
   Code,
-  Shield,
   Clock,
   CheckCircle,
   AlertCircle,
@@ -32,80 +31,96 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-interface IDeployments {
-  id: string;
-  name: string;
-  category: string; // ERC20, ERC721, etc.
-  address: string | null; // null if not deployed
-  abi: string | null; // null if not compiled
-  status: "deployed" | "not_deployed" | "compiling" | "error";
-  createdAt: string; // ISO date string
-  description?: string;
-  network?: string;
-  gasUsed?: string;
-  txHash?: string;
-}
+import { useGetDeployments } from "@/hooks/deployments.hook";
+
+import type { IDeployment } from "@/types/deployments.types";
 
 export default function Deploy() {
   const [deployingId, setDeployingId] = useState<string | null>(null);
 
-  // Dummy data for demonstration
-  const deployments: IDeployments[] = [
+  const {
+    data: deploymentsData,
+    isLoading: isLoadingDeployments,
+    isError: isErrorDeployments,
+    error: deploymentsError,
+  } = useGetDeployments();
+
+  const dummyDeployments: IDeployment[] = [
     {
-      id: "1",
+      id: "dummy-1",
       name: "MyToken",
       category: "ERC20",
       address: "0x1234567890123456789012345678901234567890",
       abi: '{"abi": "sample abi content"}',
       status: "deployed",
-      createdAt: "2024-01-15T10:30:00Z",
+      createdAt: new Date("2024-01-15T10:30:00Z"),
+      updatedAt: new Date("2024-01-15T10:35:00Z"),
       description: "Custom ERC20 token with burn functionality",
-      network: "Hyperliquid",
-      gasUsed: "2,345,678",
-      txHash:
+      wallet: "0x742d35Cc6634C0532925a3b8D0d8E6d9A9e2e7A7",
+      deployedTx:
         "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
     },
     {
-      id: "2",
+      id: "dummy-2",
       name: "NFTCollection",
       category: "ERC721",
-      address: null,
+      address: undefined,
       abi: '{"abi": "compiled abi content"}',
-      status: "not_deployed",
-      createdAt: "2024-01-14T15:45:00Z",
+      status: "compiled",
+      createdAt: new Date("2024-01-14T15:45:00Z"),
+      updatedAt: new Date("2024-01-14T15:45:00Z"),
       description: "Unique NFT collection with metadata",
-      network: "Hyperliquid",
+      wallet: "0x742d35Cc6634C0532925a3b8D0d8E6d9A9e2e7A7",
     },
     {
-      id: "3",
+      id: "dummy-3",
       name: "GameAssets",
       category: "ERC1155",
-      address: null,
-      abi: null,
-      status: "compiling",
-      createdAt: "2024-01-14T09:20:00Z",
+      address: undefined,
+      abi: undefined,
+      status: "not_compiled",
+      createdAt: new Date("2024-01-14T09:20:00Z"),
+      updatedAt: new Date("2024-01-14T09:20:00Z"),
       description: "Multi-token standard for gaming assets",
-      network: "Hyperliquid",
+      wallet: "0x742d35Cc6634C0532925a3b8D0d8E6d9A9e2e7A7",
     },
     {
-      id: "4",
+      id: "dummy-4",
       name: "FailedContract",
       category: "ERC20",
-      address: null,
-      abi: null,
+      address: undefined,
+      abi: undefined,
       status: "error",
-      createdAt: "2024-01-13T12:15:00Z",
+      createdAt: new Date("2024-01-13T12:15:00Z"),
+      updatedAt: new Date("2024-01-13T12:15:00Z"),
       description: "Contract compilation failed",
-      network: "Hyperliquid",
+      wallet: "0x742d35Cc6634C0532925a3b8D0d8E6d9A9e2e7A7",
     },
   ];
 
-  const getStatusIcon = (status: IDeployments["status"]) => {
+  // Combine API and dummy data for demonstration
+  // const deployments: IDeployment[] = [...apiDeployments, ...dummyDeployments];
+
+  const deployments: IDeployment[] = useMemo(() => {
+    return [...(deploymentsData || []), ...dummyDeployments];
+  }, [deploymentsData, dummyDeployments]);
+
+  // Calculate stats from deployments
+  const stats = {
+    deployed: deployments.filter((d) => d.status === "deployed").length,
+    ready: deployments.filter((d) => d.status === "compiled").length,
+    compiling: deployments.filter((d) => d.status === "compiling").length,
+    failed: deployments.filter((d) => d.status === "error").length,
+  };
+
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case "deployed":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "not_deployed":
+      case "compiled":
         return <Clock className="h-5 w-5 text-yellow-500" />;
+      case "not_compiled":
+        return <Clock className="h-5 w-5 text-gray-500" />;
       case "compiling":
         return <Loader2 className="h-5 w-5 animate-spin text-blue-500" />;
       case "error":
@@ -115,26 +130,30 @@ export default function Deploy() {
     }
   };
 
-  const getStatusBadge = (status: IDeployments["status"]) => {
+  const getStatusBadge = (status: string) => {
     const variants = {
       deployed: "bg-green-700 text-green-100",
-      not_deployed: "bg-yellow-700 text-yellow-100",
+      compiled: "bg-yellow-700 text-yellow-100",
+      not_compiled: "bg-gray-700 text-gray-100",
       compiling: "bg-blue-700 text-blue-100",
       error: "bg-red-700 text-red-100",
     };
 
     const labels = {
       deployed: "Deployed",
-      not_deployed: "Ready to Deploy",
+      compiled: "Ready to Deploy",
+      not_compiled: "Not Compiled",
       compiling: "Compiling",
       error: "Failed",
     };
 
     return (
-      <Badge className={`${variants[status]} px-3 py-1`}>
+      <Badge
+        className={`${variants[status as keyof typeof variants] || variants.not_compiled} px-3 py-1`}
+      >
         <div className="flex items-center gap-2">
           {getStatusIcon(status)}
-          {labels[status]}
+          {labels[status as keyof typeof labels] || "Unknown"}
         </div>
       </Badge>
     );
@@ -164,7 +183,7 @@ export default function Deploy() {
     }, 3000);
   };
 
-  const handleDownloadABI = (deployment: IDeployments) => {
+  const handleDownloadABI = (deployment: IDeployment) => {
     if (!deployment.abi) {
       toast.error("ABI not available");
       return;
@@ -227,245 +246,308 @@ export default function Deploy() {
           </div>
 
           {/* Stats Cards */}
-          <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-4">
-            <Card className="border-slate-700 bg-slate-800/30 p-6">
-              <div className="flex items-center gap-4">
-                <div className="rounded-full bg-green-600/20 p-3">
-                  <CheckCircle className="h-6 w-6 text-green-400" />
+          {!isLoadingDeployments && !isErrorDeployments && (
+            <div className="mb-12 grid grid-cols-1 gap-4 sm:grid-cols-4">
+              <Card className="border-slate-700 bg-slate-800/30 p-6">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-green-600/20 p-3">
+                    <CheckCircle className="h-6 w-6 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">
+                      {stats.deployed}
+                    </p>
+                    <p className="text-sm text-slate-400">Deployed</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">1</p>
-                  <p className="text-sm text-slate-400">Deployed</p>
+              </Card>
+              <Card className="border-slate-700 bg-slate-800/30 p-6">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-yellow-600/20 p-3">
+                    <Clock className="h-6 w-6 text-yellow-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">
+                      {stats.ready}
+                    </p>
+                    <p className="text-sm text-slate-400">Ready</p>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Card className="border-slate-700 bg-slate-800/30 p-6">
-              <div className="flex items-center gap-4">
-                <div className="rounded-full bg-yellow-600/20 p-3">
-                  <Clock className="h-6 w-6 text-yellow-400" />
+              </Card>
+              <Card className="border-slate-700 bg-slate-800/30 p-6">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-blue-600/20 p-3">
+                    <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">
+                      {stats.compiling}
+                    </p>
+                    <p className="text-sm text-slate-400">Compiling</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">1</p>
-                  <p className="text-sm text-slate-400">Ready</p>
+              </Card>
+              <Card className="border-slate-700 bg-slate-800/30 p-6">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-red-600/20 p-3">
+                    <AlertCircle className="h-6 w-6 text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">
+                      {stats.failed}
+                    </p>
+                    <p className="text-sm text-slate-400">Failed</p>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Card className="border-slate-700 bg-slate-800/30 p-6">
-              <div className="flex items-center gap-4">
-                <div className="rounded-full bg-blue-600/20 p-3">
-                  <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+              </Card>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoadingDeployments && (
+            <div className="flex items-center justify-center py-12">
+              <Card className="border-slate-700 bg-slate-800/30 p-8 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin">
+                    <Loader2 className="h-12 w-12 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">
+                      Loading Deployments
+                    </h3>
+                    <p className="text-slate-400">
+                      Fetching your smart contract deployments...
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">1</p>
-                  <p className="text-sm text-slate-400">Compiling</p>
+              </Card>
+            </div>
+          )}
+
+          {/* Error State */}
+          {isErrorDeployments && (
+            <div className="flex items-center justify-center py-12">
+              <Card className="border-red-600 bg-red-900/20 p-8 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="rounded-full bg-red-600/20 p-4">
+                    <AlertCircle className="h-12 w-12 text-red-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-red-400">
+                      Failed to Load Deployments
+                    </h3>
+                    <p className="mb-4 text-red-300">
+                      {deploymentsError?.message ||
+                        "An error occurred while fetching your deployments."}
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="border-red-600 text-red-300 hover:bg-red-700/20"
+                      onClick={() => window.location.reload()}
+                    >
+                      Try Again
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Card className="border-slate-700 bg-slate-800/30 p-6">
-              <div className="flex items-center gap-4">
-                <div className="rounded-full bg-red-600/20 p-3">
-                  <AlertCircle className="h-6 w-6 text-red-400" />
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-white">1</p>
-                  <p className="text-sm text-slate-400">Failed</p>
-                </div>
-              </div>
-            </Card>
-          </div>
+              </Card>
+            </div>
+          )}
 
           {/* Deployments Grid */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {deployments.map((deployment) => (
-              <Card
-                key={deployment.id}
-                className="group border-slate-700 bg-slate-800/30 transition-all duration-300 hover:bg-slate-800/50 hover:shadow-2xl"
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r ${getCategoryGradient(deployment.category)}`}
-                      >
-                        <Code className="h-6 w-6 text-white" />
+          {!isLoadingDeployments && !isErrorDeployments && (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {deployments.map((deployment) => (
+                <Card
+                  key={deployment.id}
+                  className="group border-slate-700 bg-slate-800/30 transition-all duration-300 hover:bg-slate-800/50 hover:shadow-2xl"
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r ${getCategoryGradient(deployment.category)}`}
+                        >
+                          <Code className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl font-bold text-white">
+                            {deployment.name}
+                          </CardTitle>
+                          <div className="flex items-center gap-2 text-sm text-slate-400">
+                            <Badge
+                              variant="outline"
+                              className="border-slate-600 text-slate-300"
+                            >
+                              {deployment.category}
+                            </Badge>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-xl font-bold text-white">
-                          {deployment.name}
-                        </CardTitle>
-                        <div className="flex items-center gap-2 text-sm text-slate-400">
-                          <Badge
-                            variant="outline"
-                            className="border-slate-600 text-slate-300"
+                      {getStatusBadge(deployment.status)}
+                    </div>
+                    {deployment.description && (
+                      <CardDescription className="mt-2 text-slate-300">
+                        {deployment.description}
+                      </CardDescription>
+                    )}
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    {/* Contract Details */}
+                    <div className="space-y-3">
+                      {deployment.address && (
+                        <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
+                          <div className="flex items-center gap-2">
+                            <Hash className="h-4 w-4 text-slate-400" />
+                            <span className="font-mono text-sm text-slate-200">
+                              {deployment.address.slice(0, 10)}...
+                              {deployment.address.slice(-8)}
+                            </span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={() =>
+                              handleCopyAddress(deployment.address!)
+                            }
                           >
-                            {deployment.category}
-                          </Badge>
-                          <span>•</span>
-                          <span>{deployment.network}</span>
+                            <Copy className="h-4 w-4" />
+                          </Button>
                         </div>
-                      </div>
-                    </div>
-                    {getStatusBadge(deployment.status)}
-                  </div>
-                  {deployment.description && (
-                    <CardDescription className="mt-2 text-slate-300">
-                      {deployment.description}
-                    </CardDescription>
-                  )}
-                </CardHeader>
+                      )}
 
-                <CardContent className="space-y-4">
-                  {/* Contract Details */}
-                  <div className="space-y-3">
-                    {deployment.address && (
-                      <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
-                        <div className="flex items-center gap-2">
-                          <Hash className="h-4 w-4 text-slate-400" />
-                          <span className="font-mono text-sm text-slate-200">
-                            {deployment.address.slice(0, 10)}...
-                            {deployment.address.slice(-8)}
-                          </span>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0"
-                          onClick={() => handleCopyAddress(deployment.address!)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2 text-sm text-slate-400">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        Created{" "}
-                        {new Date(deployment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    {deployment.gasUsed && (
                       <div className="flex items-center gap-2 text-sm text-slate-400">
-                        <Shield className="h-4 w-4" />
-                        <span>Gas Used: {deployment.gasUsed}</span>
+                        <Calendar className="h-4 w-4" />
+                        <span>
+                          Created{" "}
+                          {new Date(deployment.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                        <span>
+                          Wallet: {deployment.wallet.slice(0, 6)}...
+                          {deployment.wallet.slice(-4)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar for Compiling */}
+                    {deployment.status === "compiling" && (
+                      <div className="space-y-2">
+                        <Progress value={65} className="h-2" />
+                        <p className="text-sm text-slate-400">
+                          Compiling contract...
+                        </p>
                       </div>
                     )}
-                  </div>
 
-                  {/* Progress Bar for Compiling */}
-                  {deployment.status === "compiling" && (
-                    <div className="space-y-2">
-                      <Progress value={65} className="h-2" />
-                      <p className="text-sm text-slate-400">
-                        Compiling contract...
-                      </p>
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      {deployment.status === "compiled" && deployment.abi && (
+                        <Button
+                          size="sm"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                          onClick={() => handleDeploy(deployment.id)}
+                          disabled={deployingId === deployment.id}
+                        >
+                          {deployingId === deployment.id ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Deploying...
+                            </>
+                          ) : (
+                            <>
+                              <Rocket className="mr-2 h-4 w-4" />
+                              Deploy
+                            </>
+                          )}
+                        </Button>
+                      )}
+
+                      {deployment.abi && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                            onClick={() => handleDownloadABI(deployment)}
+                          >
+                            <Download className="mr-2 h-4 w-4" />
+                            Download ABI
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                            onClick={() => handleCopyABI(deployment.abi!)}
+                          >
+                            <FileCode className="mr-2 h-4 w-4" />
+                            Copy ABI
+                          </Button>
+                        </>
+                      )}
+
+                      {deployment.address && deployment.deployedTx && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                          onClick={() =>
+                            window.open(
+                              `https://explorer.hyperliquid.io/tx/${deployment.deployedTx}`,
+                              "_blank",
+                            )
+                          }
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          View on Explorer
+                        </Button>
+                      )}
+
+                      {deployment.status === "error" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-red-600 text-red-300 hover:bg-red-700/20"
+                          onClick={() =>
+                            toast.info("Retry functionality coming soon!")
+                          }
+                        >
+                          <Play className="mr-2 h-4 w-4" />
+                          Retry
+                        </Button>
+                      )}
                     </div>
-                  )}
+                  </CardContent>
+                </Card>
+              ))}
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-2">
-                    {deployment.status === "not_deployed" && deployment.abi && (
-                      <Button
-                        size="sm"
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
-                        onClick={() => handleDeploy(deployment.id)}
-                        disabled={deployingId === deployment.id}
-                      >
-                        {deployingId === deployment.id ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deploying...
-                          </>
-                        ) : (
-                          <>
-                            <Rocket className="mr-2 h-4 w-4" />
-                            Deploy
-                          </>
-                        )}
-                      </Button>
-                    )}
-
-                    {deployment.abi && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-slate-600 text-slate-300 hover:bg-slate-700"
-                          onClick={() => handleDownloadABI(deployment)}
-                        >
-                          <Download className="mr-2 h-4 w-4" />
-                          Download ABI
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="border-slate-600 text-slate-300 hover:bg-slate-700"
-                          onClick={() => handleCopyABI(deployment.abi!)}
-                        >
-                          <FileCode className="mr-2 h-4 w-4" />
-                          Copy ABI
-                        </Button>
-                      </>
-                    )}
-
-                    {deployment.address && deployment.txHash && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-slate-600 text-slate-300 hover:bg-slate-700"
-                        onClick={() =>
-                          window.open(
-                            `https://explorer.hyperliquid.io/tx/${deployment.txHash}`,
-                            "_blank",
-                          )
-                        }
-                      >
-                        <ExternalLink className="mr-2 h-4 w-4" />
-                        View on Explorer
-                      </Button>
-                    )}
-
-                    {deployment.status === "error" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-red-600 text-red-300 hover:bg-red-700/20"
-                        onClick={() =>
-                          toast.info("Retry functionality coming soon!")
-                        }
-                      >
-                        <Play className="mr-2 h-4 w-4" />
-                        Retry
-                      </Button>
-                    )}
+              {/* Empty State */}
+              {deployments.length === 0 && (
+                <Card className="col-span-full border-slate-700 bg-slate-800/30 p-12 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-700/50">
+                    <Rocket className="h-8 w-8 text-slate-400" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Empty State */}
-          {deployments.length === 0 && (
-            <Card className="border-slate-700 bg-slate-800/30 p-12 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-700/50">
-                <Rocket className="h-8 w-8 text-slate-400" />
-              </div>
-              <h3 className="mb-2 text-xl font-semibold text-white">
-                No deployments yet
-              </h3>
-              <p className="mb-6 text-slate-400">
-                Start building by creating your first smart contract deployment.
-              </p>
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
-                onClick={() => (window.location.href = "/create")}
-              >
-                <Rocket className="mr-2 h-5 w-5" />
-                Create New Contract
-              </Button>
-            </Card>
+                  <h3 className="mb-2 text-xl font-semibold text-white">
+                    No deployments yet
+                  </h3>
+                  <p className="mb-6 text-slate-400">
+                    Start building by creating your first smart contract
+                    deployment.
+                  </p>
+                  <Button
+                    size="lg"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                    onClick={() => (window.location.href = "/create")}
+                  >
+                    <Rocket className="mr-2 h-5 w-5" />
+                    Create New Contract
+                  </Button>
+                </Card>
+              )}
+            </div>
           )}
         </div>
       </div>

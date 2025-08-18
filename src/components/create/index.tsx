@@ -40,7 +40,8 @@ import {
 
 import { AVAILABLE_CONTRACTS } from "@/contracts";
 
-import { compileContract } from "@/services/api/compiler";
+import { useCreateDeployment } from "@/hooks/deployments.hook";
+
 import { deployContract } from "@/services/blockchain/deployer";
 import { NETWORKS, getExplorerUrlPath } from "@/services/blockchain/networks";
 
@@ -49,6 +50,8 @@ import type { DeploymentState } from "@/types";
 export default function Create() {
   const { isWalletConnected, openWalletModal, walletProvider, switchNetwork } =
     useAssets();
+
+  const useCreateDeploymentMutation = useCreateDeployment();
 
   const [deploymentState, setDeploymentState] = useState<DeploymentState>({
     selectedContract: "",
@@ -154,16 +157,16 @@ export default function Create() {
 
       const sourceCode = getPreviewCode();
 
-      // Extract the actual contract name from the processed source code
-      const contractNameMatch = sourceCode.match(/contract\s+(\w+)\s+is/);
-      const actualContractName = contractNameMatch
-        ? contractNameMatch[1]
-        : currentContract.name;
-
-      const compilationResult = await compileContract({
-        contractName: actualContractName,
+      const compileResponse = await useCreateDeploymentMutation.mutateAsync({
+        name: currentContract.name,
+        category: currentContract.category || "Smart Contract",
+        description: currentContract.description,
         sourceCode,
       });
+
+      console.log(compileResponse);
+
+      const compilationResult = compileResponse.compilationResult;
 
       setDeploymentState((prev) => ({
         ...prev,
