@@ -50,7 +50,10 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        "bg-primary hover:bg-primary/80 cursor-pointer transition-all duration-200",
+      )}
       {...props}
     />
   );
