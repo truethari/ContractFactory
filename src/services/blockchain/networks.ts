@@ -83,3 +83,12 @@ export const getExplorerUrlPath = (chainId: number): string | undefined => {
     return undefined;
   }
 };
+
+export const getChainImage = (chainId: number): string => {
+  const images: Record<string, string> = {
+    999: "/img/chains/Hyperliquid.png",
+    1337: "/img/chains/Ganache.png",
+  };
+
+  return images[chainId] || "/img/chains/default.png";
+};

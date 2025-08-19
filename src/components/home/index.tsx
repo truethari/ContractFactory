@@ -176,7 +176,7 @@ export default function Home() {
             <Button
               size="lg"
               className="rounded-md px-8 py-3 font-medium"
-              onClick={() => (window.location.href = "/deploy")}
+              onClick={() => (window.location.href = "/dashboard")}
             >
               Get started
               <ChevronRight className="ml-2 h-4 w-4" />
@@ -431,7 +431,7 @@ export default function Home() {
                   <Button
                     size="lg"
                     className="w-full py-3 font-medium"
-                    onClick={() => (window.location.href = "/deploy")}
+                    onClick={() => (window.location.href = "/dashboard")}
                   >
                     <Rocket className="mr-2 h-4 w-4" />
                     Start Building
