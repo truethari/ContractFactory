@@ -6,9 +6,11 @@ import {
   Menu,
   Wallet,
   Rocket,
+  Loader2,
   Activity,
   FileCode,
   Settings,
+  AlertCircle,
   LayoutDashboard,
 } from "lucide-react";
 
@@ -19,9 +21,35 @@ import SettingsTab from "./settings";
 import ActivityTab from "./activity";
 import Deployments from "./deployments";
 
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+import { useActivities } from "@/hooks/activities.hook";
+import { useGetDeployments } from "@/hooks/deployments.hook";
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const {
+    data: deploymentsData,
+    error: deploymentsError,
+    refetch: refetchDeployments,
+    isError: isErrorDeployments,
+    isLoading: isLoadingDeployments,
+  } = useGetDeployments();
+
+  const {
+    data: activitiesData,
+    refetch: refetchActivities,
+    isError: isErrorActivities,
+    isLoading: isLoadingActivities,
+  } = useActivities();
+
+  const refreshAll = async () => {
+    await refetchDeployments();
+    await refetchActivities();
+  };
 
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -34,31 +62,6 @@ export default function Dashboard() {
 
   const handleChangeActiveTab = (tabId: string) => {
     setActiveTab(tabId);
-  };
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "overview":
-        return <Overview />;
-
-      case "create":
-        return <Create />;
-
-      case "deployments":
-        return <Deployments onChangeActiveTab={handleChangeActiveTab} />;
-
-      case "activity":
-        return <ActivityTab />;
-
-      case "wallet":
-        return <WalletTab />;
-
-      case "settings":
-        return <SettingsTab />;
-
-      default:
-        return <div className="text-white">Select a tab</div>;
-    }
   };
 
   return (
@@ -132,7 +135,105 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-auto">
-          <div className="p-8">{renderContent()}</div>
+          <div className="flex flex-col p-8">
+            {isLoadingDeployments ? (
+              <Card
+                style={{ backgroundColor: "#111e17", borderColor: "#083322" }}
+                className="mb-10 p-8 text-center"
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin">
+                    <Loader2
+                      className="h-12 w-12"
+                      style={{ color: "#23e99d" }}
+                    />
+                  </div>
+                  <div>
+                    <h3
+                      className="text-xl font-semibold"
+                      style={{ color: "#ffffff" }}
+                    >
+                      Loading Deployments
+                    </h3>
+                    <p style={{ color: "#a0a0a0" }}>
+                      Fetching your smart contract deployments...
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ) : isErrorDeployments ? (
+              <Card
+                className="mb-10 p-8 text-center"
+                style={{
+                  backgroundColor: "#2d1b1b",
+                  borderColor: "#dc2626",
+                }}
+              >
+                <div className="flex flex-col items-center gap-4">
+                  <div
+                    className="rounded-full p-4"
+                    style={{ backgroundColor: "#f8717140" }}
+                  >
+                    <AlertCircle
+                      className="h-12 w-12"
+                      style={{ color: "#f87171" }}
+                    />
+                  </div>
+                  <div>
+                    <h3
+                      className="text-xl font-semibold"
+                      style={{ color: "#f87171" }}
+                    >
+                      Failed to Load Deployments
+                    </h3>
+                    <p className="mb-4" style={{ color: "#fca5a5" }}>
+                      {deploymentsError?.message ||
+                        "An error occurred while fetching your deployments."}
+                    </p>
+                    <Button
+                      variant="outline"
+                      style={{
+                        borderColor: "#dc2626",
+                        color: "#fca5a5",
+                        backgroundColor: "transparent",
+                      }}
+                      onClick={() => refetchDeployments()}
+                    >
+                      Try Again
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ) : null}
+
+            <>
+              {activeTab === "overview" && (
+                <Overview
+                  deployments={deploymentsData || []}
+                  activities={activitiesData || []}
+                  isLoading={isLoadingActivities}
+                  isError={isErrorActivities}
+                  refresh={refetchActivities}
+                />
+              )}
+              {activeTab === "create" && (
+                <Create
+                  refreshAll={refreshAll}
+                  onChangeActiveTab={handleChangeActiveTab}
+                />
+              )}
+              {activeTab === "deployments" && (
+                <Deployments
+                  deployments={deploymentsData || []}
+                  refreshAll={refreshAll}
+                  onChangeActiveTab={handleChangeActiveTab}
+                />
+              )}
+              {activeTab === "activity" && <ActivityTab />}
+              {activeTab === "wallet" && <WalletTab />}
+              {activeTab === "settings" && <SettingsTab />}
+            </>
+          </div>
         </div>
       </div>
     </div>

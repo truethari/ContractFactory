@@ -1,6 +1,9 @@
-import { Activity, FileCode, Rocket, Settings } from "lucide-react";
+"use client";
 
-import { Badge } from "@/components/ui/badge";
+import { useMemo } from "react";
+import { FileCode, Rocket, Settings } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardTitle,
@@ -9,7 +12,35 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-export default function Overview() {
+import { timestampToLocalDateAndTime } from "@/utils/timestamp";
+
+import type { IActivity } from "@/types/activities.types";
+import { type IDeployment, EDeploymentStatus } from "@/types/deployments.types";
+
+interface Props {
+  deployments: IDeployment[];
+  activities: IActivity[];
+  isLoading: boolean;
+  isError: boolean;
+  refresh: () => void;
+}
+
+export default function Overview(props: Props) {
+  const { activities, isLoading, isError, refresh } = props;
+
+  const [totalDeployments, activeContracts, successRate] = useMemo(() => {
+    const total = props.deployments.length;
+    const active = props.deployments.filter(
+      (deployment) => deployment.status === EDeploymentStatus.DEPLOYED,
+    ).length;
+    const successCount = props.deployments.filter(
+      (deployment) => deployment.status === EDeploymentStatus.DEPLOYED,
+    ).length;
+    const rate = total > 0 ? (successCount / total) * 100 : 0;
+
+    return [total, active, rate.toFixed(1)];
+  }, [props.deployments]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -38,10 +69,10 @@ export default function Overview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" style={{ color: "#ffffff" }}>
-              12
+              {totalDeployments}
             </div>
             <p className="text-xs" style={{ color: "#a0a0a0" }}>
-              +2 from last month
+              +{totalDeployments} from last month
             </p>
           </CardContent>
         </Card>
@@ -58,10 +89,10 @@ export default function Overview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" style={{ color: "#ffffff" }}>
-              8
+              {activeContracts}
             </div>
             <p className="text-xs" style={{ color: "#a0a0a0" }}>
-              +1 from last week
+              +{activeContracts} from last week
             </p>
           </CardContent>
         </Card>
@@ -78,7 +109,7 @@ export default function Overview() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" style={{ color: "#ffffff" }}>
-              98.5%
+              {successRate}%
             </div>
             <p className="text-xs" style={{ color: "#a0a0a0" }}>
               Deployment success
@@ -91,52 +122,83 @@ export default function Overview() {
       <Card style={{ backgroundColor: "#111e17", borderColor: "#083322" }}>
         <CardHeader>
           <CardTitle style={{ color: "#ffffff" }}>Recent Activity</CardTitle>
-          <CardDescription style={{ color: "#a0a0a0" }}>
-            Your latest smart contract deployments and activities
+          <CardDescription
+            style={{ color: "#a0a0a0" }}
+            className="flex w-full justify-between"
+          >
+            <div>Your latest smart contract deployments and activities</div>
+            <Button onClick={refresh}>Refresh</Button>
           </CardDescription>
         </CardHeader>
+
         <CardContent>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              <div className="animate-spin">
+                <Rocket className="h-12 w-12" style={{ color: "#23e99d" }} />
+              </div>
+              <h3
+                className="text-xl font-semibold"
+                style={{ color: "#ffffff" }}
+              >
+                Loading Activities
+              </h3>
+              <p style={{ color: "#a0a0a0" }}>
+                Fetching your latest smart contract activities...
+              </p>
+            </div>
+          ) : isError ? (
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              <div
+                className="rounded-full p-4"
+                style={{ backgroundColor: "#f8717140" }}
+              >
+                <Rocket className="h-12 w-12" style={{ color: "#f87171" }} />
+              </div>
+              <h3
+                className="text-xl font-semibold"
+                style={{ color: "#f87171" }}
+              >
+                Error Loading Activities
+              </h3>
+              <p style={{ color: "#a0a0a0" }}>
+                There was an error fetching your activities. Please try again.
+              </p>
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="flex flex-col items-center justify-center space-y-4 p-8">
+              <div
+                className="rounded-full p-4"
+                style={{ backgroundColor: "#f8717140" }}
+              >
+                <Rocket className="h-12 w-12" style={{ color: "#f87171" }} />
+              </div>
+              <h3
+                className="text-xl font-semibold"
+                style={{ color: "#ffffff" }}
+              >
+                No Recent Activities
+              </h3>
+              <p style={{ color: "#a0a0a0" }}>
+                You have no recent smart contract activities.
+              </p>
+            </div>
+          ) : null}
+
           <div className="space-y-4">
-            {[
-              {
-                action: "Deployed ERC20 Token",
-                time: "2 hours ago",
-                status: "Success",
-              },
-              {
-                action: "Created NFT Collection",
-                time: "1 day ago",
-                status: "Success",
-              },
-              {
-                action: "Updated Contract Settings",
-                time: "3 days ago",
-                status: "Pending",
-              },
-            ].map((item, index) => (
+            {activities.map((item, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between py-2"
               >
                 <div>
                   <p className="font-medium" style={{ color: "#ffffff" }}>
-                    {item.action}
+                    {item.description}
                   </p>
                   <p className="text-sm" style={{ color: "#a0a0a0" }}>
-                    {item.time}
+                    {timestampToLocalDateAndTime(item.timestamp)}
                   </p>
                 </div>
-                <Badge
-                  style={{
-                    backgroundColor:
-                      item.status === "Success" ? "#083322" : "#2d1b69",
-                    color: item.status === "Success" ? "#23e99d" : "#a78bfa",
-                    borderColor:
-                      item.status === "Success" ? "#23e99d" : "#a78bfa",
-                  }}
-                >
-                  {item.status}
-                </Badge>
               </div>
             ))}
           </div>

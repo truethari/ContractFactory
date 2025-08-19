@@ -1,3 +1,10 @@
+export enum EDeploymentStatus {
+  PENDING = "PENDING",
+  COMPILED = "COMPILED",
+  DEPLOYED = "DEPLOYED",
+  FAILED = "FAILED",
+}
+
 export interface ICreateDeploymentPayload {
   name: string;
   category: string;
@@ -30,8 +37,14 @@ export interface IDeployment {
   address?: string; // null if not deployed
   abi?: string; // null if not compiled
   deployedTx?: string; // null if not deployed
-  status: string;
+  status: EDeploymentStatus;
   wallet: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IDeployUpdatePayload {
+  id: string;
+  deployedTx: string;
+  address: string;
 }

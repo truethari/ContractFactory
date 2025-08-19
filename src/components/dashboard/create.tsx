@@ -2,17 +2,17 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
+  Zap,
+  Copy,
   Code,
-  Settings,
-  Network,
+  Clock,
+  Shield,
   Rocket,
+  Network,
+  Settings,
   CheckCircle,
   AlertCircle,
   ExternalLink,
-  Copy,
-  Zap,
-  Shield,
-  Clock,
 } from "lucide-react";
 
 import { useAssets } from "@/components/providers/AssetsProvider";
@@ -24,9 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Card,
-  CardContent,
-  CardHeader,
   CardTitle,
+  CardHeader,
+  CardContent,
   CardDescription,
 } from "@/components/ui/card";
 import {
@@ -39,7 +39,10 @@ import {
 
 import { AVAILABLE_CONTRACTS } from "@/contracts";
 
-import { useCreateDeployment } from "@/hooks/deployments.hook";
+import {
+  useCreateDeployment,
+  useUpdateDeployment,
+} from "@/hooks/deployments.hook";
 
 import { deployContract } from "@/services/blockchain/deployer";
 import {
@@ -50,10 +53,23 @@ import {
 
 import type { DeploymentState } from "@/types";
 
-export default function Create() {
-  const { isWalletConnected, openWalletModal, walletProvider, switchNetwork } =
-    useAssets();
+interface Props {
+  onChangeActiveTab: (tab: string) => void;
+  refreshAll: () => Promise<void>;
+}
 
+export default function Create(props: Props) {
+  const { onChangeActiveTab, refreshAll } = props;
+
+  const {
+    isWalletConnected,
+    openWalletModal,
+    walletProvider,
+    switchNetwork,
+    copyToClipboard,
+  } = useAssets();
+
+  const useUpdateDeploymentMutation = useUpdateDeployment();
   const useCreateDeploymentMutation = useCreateDeployment();
 
   const [deploymentState, setDeploymentState] = useState<DeploymentState>({
@@ -201,6 +217,19 @@ export default function Create() {
         isDeploying: false,
         deploymentResult,
       }));
+
+      if (
+        deploymentResult.transactionHash &&
+        deploymentResult.contractAddress
+      ) {
+        await useUpdateDeploymentMutation.mutateAsync({
+          id: compileResponse.deployment.id,
+          deployedTx: deploymentResult.transactionHash,
+          address: deploymentResult.contractAddress,
+        });
+      }
+
+      await refreshAll();
     } catch (error) {
       console.error("Deployment error:", error);
       setDeploymentState((prev) => ({
@@ -353,13 +382,6 @@ export default function Create() {
                       style={{ color: "#ffffff" }}
                     >
                       <div className="flex items-center gap-3">
-                        {/*<div*/}
-                        {/*  className="flex h-6 w-6 items-center justify-center rounded-full"*/}
-                        {/*  style={{ backgroundColor: "#23e99d" }}*/}
-                        {/*>*/}
-                        {/*  <div className="h-2 w-2 rounded-full bg-black"></div>*/}
-                        {/*</div>*/}
-
                         <img
                           src={getChainImage(Number(network.id))}
                           alt={network.name}
@@ -608,13 +630,13 @@ export default function Create() {
                             className="h-8 w-8 p-0"
                             style={{ color: "#a0a0a0" }}
                             onClick={() =>
-                              navigator.clipboard.writeText(
+                              copyToClipboard(
                                 deploymentState.deploymentResult
                                   ?.contractAddress || "",
                               )
                             }
                           >
-                            <Copy className="h-4 w-4" />
+                            <Copy className="h-4 w-4 text-black" />
                           </Button>
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -644,7 +666,7 @@ export default function Create() {
                               color: "#23e99d",
                               backgroundColor: "transparent",
                             }}
-                            onClick={() => (window.location.href = "/deploy")}
+                            onClick={() => onChangeActiveTab("deployments")}
                           >
                             <Rocket className="mr-2 h-4 w-4" />
                             Manage Deployments
@@ -870,9 +892,7 @@ export default function Create() {
                       size="sm"
                       variant="ghost"
                       className="h-8 px-2 text-black"
-                      onClick={() =>
-                        navigator.clipboard.writeText(getPreviewCode())
-                      }
+                      onClick={() => copyToClipboard(getPreviewCode())}
                     >
                       <Copy className="mr-1 h-3 w-3" />
                       Copy

@@ -2,6 +2,7 @@ import { api } from "@/services/api.service";
 
 import type {
   IDeployment,
+  IDeployUpdatePayload,
   ICreateDeploymentPayload,
   ICreateDeploymentResponse,
 } from "@/types/deployments.types";
@@ -16,4 +17,16 @@ export const createDeployment = async (
 ): Promise<ICreateDeploymentResponse> => {
   const { data } = await api.post("/deployments/compile", payload);
   return data.data;
+};
+
+export const updateDeployment = async (
+  payload: IDeployUpdatePayload,
+): Promise<IDeployment> => {
+  const { id, ...rest } = payload;
+  const { data } = await api.post(`/deployments/${id}/deploy`, rest);
+  return data.data;
+};
+
+export const deleteDeployment = async (id: string): Promise<void> => {
+  await api.delete(`/deployments/${id}`);
 };
