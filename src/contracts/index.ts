@@ -12,7 +12,8 @@ interface IContractDefinition {
 export const AVAILABLE_CONTRACTS: IContractDefinition[] = [
   {
     name: "ERC20",
-    description: "Advanced ERC20 Token with burning, minting controls, and security features",
+    description:
+      "Advanced ERC20 Token with burning, minting controls, and security features",
     category: "ERC20",
     code: ERC20Code,
     inputs: [
@@ -20,12 +21,17 @@ export const AVAILABLE_CONTRACTS: IContractDefinition[] = [
       { name: "Token Symbol", type: "string", replaceWith: "TOKEN_SYMBOL" },
       { name: "Decimals", type: "uint8", replaceWith: "DECIMALS" },
       { name: "Max Supply", type: "uint256", replaceWith: "MAX_SUPPLY" },
-      { name: "Initial Supply", type: "uint256", replaceWith: "INITIAL_SUPPLY" },
+      {
+        name: "Initial Supply",
+        type: "uint256",
+        replaceWith: "INITIAL_SUPPLY",
+      },
     ],
   },
   {
     name: "ERC721",
-    description: "Advanced ERC721 NFT with minting controls, whitelist, and security features",
+    description:
+      "Advanced ERC721 NFT with minting controls, whitelist, and security features",
     code: ERC721Code,
     category: "ERC721",
     inputs: [
@@ -33,9 +39,17 @@ export const AVAILABLE_CONTRACTS: IContractDefinition[] = [
       { name: "Token Symbol", type: "string", replaceWith: "TOKEN_SYMBOL" },
       { name: "Max Supply", type: "uint256", replaceWith: "MAX_SUPPLY_" },
       { name: "Mint Price (ETH)", type: "string", replaceWith: "MINT_PRICE" },
-      { name: "Max Mint Per Wallet", type: "uint256", replaceWith: "MAX_MINT_PER_WALLET" },
+      {
+        name: "Max Mint Per Wallet",
+        type: "uint256",
+        replaceWith: "MAX_MINT_PER_WALLET",
+      },
       { name: "Base URI", type: "string", replaceWith: "BASE_URI" },
-      { name: "Public Mint Enabled", type: "boolean", replaceWith: "PUBLIC_MINT_ENABLED" },
+      {
+        name: "Public Mint Enabled",
+        type: "boolean",
+        replaceWith: "PUBLIC_MINT_ENABLED",
+      },
     ],
   },
 ];

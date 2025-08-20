@@ -52,7 +52,7 @@ function Button({
       data-slot="button"
       className={cn(
         buttonVariants({ variant, size, className }),
-        "bg-primary hover:bg-primary/80 cursor-pointer transition-all duration-200",
+        "cursor-pointer transition-all duration-200",
       )}
       {...props}
     />

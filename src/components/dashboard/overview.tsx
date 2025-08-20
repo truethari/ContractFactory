@@ -127,7 +127,9 @@ export default function Overview(props: Props) {
             className="flex w-full justify-between"
           >
             <div>Your latest smart contract deployments and activities</div>
-            <Button onClick={refresh}>Refresh</Button>
+            <Button className="bg-emerald-600 text-white" onClick={refresh}>
+              Refresh
+            </Button>
           </CardDescription>
         </CardHeader>
 

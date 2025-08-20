@@ -182,11 +182,7 @@ export default function Deployments(props: Props) {
         <div className="mt-6">
           <Button
             size="lg"
-            className="px-8 py-3 font-semibold shadow-lg transition-all duration-300 hover:shadow-xl"
-            style={{
-              backgroundColor: "#23e99d",
-              color: "#000000",
-            }}
+            className="bg-emerald-600 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:shadow-xl"
             onClick={() => onChangeActiveTab("create")}
           >
             <Plus className="mr-1 h-4 w-4" />
@@ -364,7 +360,7 @@ export default function Deployments(props: Props) {
                       style={{ color: "#a0a0a0" }}
                       onClick={() => copyToClipboard(deployment.address!)}
                     >
-                      <Copy className="h-4 w-4 text-black" />
+                      <Copy className="h-4 w-4" />
                     </Button>
                   </div>
                 )}
