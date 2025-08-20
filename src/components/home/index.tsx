@@ -13,8 +13,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-import BgCircles from "@/components/animations/bgCircles";
-
 import { useAssets } from "@/components/providers/AssetsProvider";
 
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +25,9 @@ import {
   CardContent,
   CardDescription,
 } from "@/components/ui/card";
+
+import Footer from "./footer";
+import BgCircles from "@/components/animations/bgCircles";
 
 import { useLogin } from "@/hooks/auth.hook";
 
@@ -110,7 +111,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen max-w-screen">
       <BgCircles />
 
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -129,49 +130,29 @@ export default function Home() {
               Smart contract deployment made simple
             </div>
 
-            <h1
-              className="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl"
-              style={{ color: "#ffffff" }}
-            >
-              <span
-                className="gradient-text-primary py-2"
-                style={{ color: "unset" }}
-              >
+            <h1 className="text-3xl font-bold text-white sm:text-4xl md:text-5xl lg:text-6xl">
+              <span className="inline-block bg-gradient-to-r from-green-400 via-emerald-500 to-green-400 bg-clip-text py-2 text-transparent">
                 Contract Factory
               </span>
             </h1>
 
-            <div
-              className="mx-auto max-w-2xl text-base leading-relaxed sm:text-lg md:text-xl"
-              style={{ color: "#a0a0a0" }}
-            >
+            <div className="mx-auto max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg md:text-xl">
               Build, compile, and deploy Solidity smart contracts with
               professional grade tools.
-              <br className="hidden sm:block" />{" "}
-              <span className="block sm:inline">
-                <span
-                  className="gradient-text-accent font-bold"
-                  style={{ color: "unset" }}
-                >
-                  No Code
-                </span>
-                ,{" "}
-                <span
-                  className="gradient-text-success font-bold"
-                  style={{ color: "unset" }}
-                >
-                  Zero fees
-                </span>
-                ,{" "}
-                <span
-                  className="gradient-text-warning font-bold"
-                  style={{ color: "unset" }}
-                >
-                  maximum security
-                </span>
-                .
-              </span>
             </div>
+            <span className="mt-3 block text-2xl sm:inline">
+              <span className="inline-block animate-pulse bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text font-bold text-transparent duration-75">
+                No Code
+              </span>
+              ,{" "}
+              <span className="inline-block animate-pulse bg-gradient-to-r from-green-400 via-teal-500 to-emerald-400 bg-clip-text font-bold text-transparent duration-150">
+                Zero fees
+              </span>
+              ,{" "}
+              <span className="inline-block animate-pulse bg-gradient-to-r from-orange-400 via-red-500 to-yellow-500 bg-clip-text font-bold text-transparent duration-75">
+                Maximum security
+              </span>
+            </span>
           </div>
 
           <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
@@ -202,15 +183,9 @@ export default function Home() {
         {/* Features */}
         <div className="mt-16 md:mt-24">
           <div className="mb-12 text-center md:mb-16">
-            <h2
-              className="mb-4 text-2xl font-normal sm:text-3xl"
-              style={{ color: "#ffffff" }}
-            >
+            <h2 className="mb-4 text-2xl font-normal text-white sm:text-3xl">
               Why choose{" "}
-              <span
-                className="gradient-text-secondary"
-                style={{ color: "unset" }}
-              >
+              <span className="inline-block bg-gradient-to-r from-pink-500 via-yellow-400 to-blue-500 bg-clip-text font-bold text-transparent">
                 Contract Factory
               </span>
               ?
@@ -234,7 +209,7 @@ export default function Home() {
                   borderColor: "#083322",
                 }}
               >
-                <div className="flex items-start gap-3 sm:gap-4">
+                <div className="flex h-full items-center gap-3 sm:gap-4">
                   <div
                     className="shrink-0 rounded-lg border p-2"
                     style={{
@@ -244,7 +219,7 @@ export default function Home() {
                   >
                     <div style={{ color: "#23e99d" }}>{feature.icon}</div>
                   </div>
-                  <div className="min-w-0 flex-1">
+                  <div className="flex h-full min-w-0 flex-col justify-center">
                     <CardTitle
                       className="mb-2 text-base font-medium sm:text-lg"
                       style={{ color: "#ffffff" }}
@@ -252,7 +227,7 @@ export default function Home() {
                       {feature.title}
                     </CardTitle>
                     <CardDescription
-                      className="text-sm leading-relaxed sm:text-base"
+                      className="flex flex-col text-sm leading-relaxed sm:text-base"
                       style={{ color: "#a0a0a0" }}
                     >
                       {feature.description}
@@ -534,6 +509,8 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        <Footer supportedContracts={supportedContracts} />
       </div>
     </div>
   );

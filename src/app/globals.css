@@ -458,8 +458,28 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gradientShift 3s ease infinite;
-  display: inline-block;
+  animation: gradientShift 3s ease infinite !important;
+  display: inline-block !important;
+}
+
+/* Extra specificity for gradient text elements */
+span.gradient-text-primary,
+h1 span.gradient-text-primary,
+div span.gradient-text-primary {
+  background: linear-gradient(
+    45deg,
+    #23e99d,
+    #20d084,
+    #1db96e,
+    #23e99d
+  ) !important;
+  background-size: 300% 300% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientShift 3s ease infinite !important;
+  display: inline-block !important;
 }
 
 .gradient-text-secondary {
@@ -476,8 +496,28 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gradientShift 4s ease infinite;
-  display: inline-block;
+  animation: gradientShift 4s ease infinite !important;
+  display: inline-block !important;
+}
+
+span.gradient-text-secondary,
+h2 span.gradient-text-secondary,
+div span.gradient-text-secondary {
+  background: linear-gradient(
+    45deg,
+    #ff6b6b,
+    #feca57,
+    #ff9ff3,
+    #54a0ff,
+    #ff6b6b
+  ) !important;
+  background-size: 400% 400% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientShift 4s ease infinite !important;
+  display: inline-block !important;
 }
 
 .gradient-text-accent {
@@ -494,8 +534,27 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gradientShift 2.5s ease infinite;
-  display: inline-block;
+  animation: gradientShift 2.5s ease infinite !important;
+  display: inline-block !important;
+}
+
+span.gradient-text-accent,
+div span.gradient-text-accent {
+  background: linear-gradient(
+    45deg,
+    #23e99d,
+    #00f2fe,
+    #4facfe,
+    #00f2fe,
+    #23e99d
+  ) !important;
+  background-size: 300% 300% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientShift 2.5s ease infinite !important;
+  display: inline-block !important;
 }
 
 .gradient-text-warning {
@@ -512,8 +571,27 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gradientShift 3.5s ease infinite;
-  display: inline-block;
+  animation: gradientShift 3.5s ease infinite !important;
+  display: inline-block !important;
+}
+
+span.gradient-text-warning,
+div span.gradient-text-warning {
+  background: linear-gradient(
+    45deg,
+    #ecb974,
+    #e7744e,
+    #ef2f1e,
+    #fc0202,
+    #ffecd2
+  ) !important;
+  background-size: 300% 300% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientShift 3.5s ease infinite !important;
+  display: inline-block !important;
 }
 
 .gradient-text-success {
@@ -530,8 +608,27 @@
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  animation: gradientShift 2.8s ease infinite;
-  display: inline-block;
+  animation: gradientShift 2.8s ease infinite !important;
+  display: inline-block !important;
+}
+
+span.gradient-text-success,
+div span.gradient-text-success {
+  background: linear-gradient(
+    45deg,
+    #23e99d,
+    #56ab2f,
+    #a8edea,
+    #56ab2f,
+    #23e99d
+  ) !important;
+  background-size: 400% 400% !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientShift 2.8s ease infinite !important;
+  display: inline-block !important;
 }
 
 .gradient-text-purple {
@@ -561,5 +658,28 @@
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+/* Tailwind-based Gradient Text Animations */
+@keyframes gradientSlide {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer utilities {
+  .animate-gradient-slide {
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientSlide 3s ease-in-out infinite;
   }
 }
