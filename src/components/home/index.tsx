@@ -113,24 +113,24 @@ export default function Home() {
     <div className="min-h-screen">
       <BgCircles />
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         {/* Hero Section */}
-        <div className="mx-auto max-w-4xl space-y-12 text-center">
-          <div className="space-y-6">
+        <div className="mx-auto max-w-4xl space-y-8 text-center md:space-y-12">
+          <div className="space-y-4 md:space-y-6">
             <div
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm"
+              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs sm:text-sm"
               style={{
                 backgroundColor: "#083322",
                 color: "#23e99d",
                 borderColor: "#23e99d40",
               }}
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
               Smart contract deployment made simple
             </div>
 
             <h1
-              className="text-5xl font-bold sm:text-6xl"
+              className="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl"
               style={{ color: "#ffffff" }}
             >
               <span
@@ -142,40 +142,42 @@ export default function Home() {
             </h1>
 
             <div
-              className="mx-auto max-w-2xl text-xl leading-relaxed"
+              className="mx-auto max-w-2xl text-base leading-relaxed sm:text-lg md:text-xl"
               style={{ color: "#a0a0a0" }}
             >
               Build, compile, and deploy Solidity smart contracts with
               professional grade tools.
-              <br />{" "}
-              <span
-                className="gradient-text-accent font-bold"
-                style={{ color: "unset" }}
-              >
-                No Code
+              <br className="hidden sm:block" />{" "}
+              <span className="block sm:inline">
+                <span
+                  className="gradient-text-accent font-bold"
+                  style={{ color: "unset" }}
+                >
+                  No Code
+                </span>
+                ,{" "}
+                <span
+                  className="gradient-text-success font-bold"
+                  style={{ color: "unset" }}
+                >
+                  Zero fees
+                </span>
+                ,{" "}
+                <span
+                  className="gradient-text-warning font-bold"
+                  style={{ color: "unset" }}
+                >
+                  maximum security
+                </span>
+                .
               </span>
-              ,{" "}
-              <span
-                className="gradient-text-success font-bold"
-                style={{ color: "unset" }}
-              >
-                Zero fees
-              </span>
-              ,{" "}
-              <span
-                className="gradient-text-warning font-bold"
-                style={{ color: "unset" }}
-              >
-                maximum security
-              </span>
-              .
             </div>
           </div>
 
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+          <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
             <Button
               size="lg"
-              className="rounded-md px-8 py-3 font-medium"
+              className="rounded-md px-6 py-3 font-medium sm:px-8"
               onClick={() => (window.location.href = "/dashboard")}
             >
               Get started
@@ -184,7 +186,7 @@ export default function Home() {
             <Button
               size="lg"
               variant="outline"
-              className="rounded-md px-8 py-3 font-medium"
+              className="rounded-md px-6 py-3 font-medium sm:px-8"
               style={{
                 borderColor: "#23e99d",
                 color: "#23e99d",
@@ -192,16 +194,16 @@ export default function Home() {
               }}
             >
               <Globe className="mr-2 h-4 w-4" />
-              View documentation
+              <span className="hidden sm:inline">View </span>Documentation
             </Button>
           </div>
         </div>
 
         {/* Features */}
-        <div className="mt-24">
-          <div className="mb-16 text-center">
+        <div className="mt-16 md:mt-24">
+          <div className="mb-12 text-center md:mb-16">
             <h2
-              className="mb-4 text-3xl font-normal"
+              className="mb-4 text-2xl font-normal sm:text-3xl"
               style={{ color: "#ffffff" }}
             >
               Why choose{" "}
@@ -214,7 +216,7 @@ export default function Home() {
               ?
             </h2>
             <p
-              className="mx-auto max-w-2xl text-lg"
+              className="mx-auto max-w-2xl text-base sm:text-lg"
               style={{ color: "#a0a0a0" }}
             >
               Everything you need to build, test, and deploy smart contracts
@@ -222,19 +224,19 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="p-6 transition-colors"
+                className="p-4 transition-colors sm:p-6"
                 style={{
                   backgroundColor: "#111e17",
                   borderColor: "#083322",
                 }}
               >
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-3 sm:gap-4">
                   <div
-                    className="rounded-lg border p-2"
+                    className="shrink-0 rounded-lg border p-2"
                     style={{
                       backgroundColor: "#083322",
                       borderColor: "#23e99d40",
@@ -242,15 +244,15 @@ export default function Home() {
                   >
                     <div style={{ color: "#23e99d" }}>{feature.icon}</div>
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <CardTitle
-                      className="mb-2 text-lg font-medium"
+                      className="mb-2 text-base font-medium sm:text-lg"
                       style={{ color: "#ffffff" }}
                     >
                       {feature.title}
                     </CardTitle>
                     <CardDescription
-                      className="leading-relaxed"
+                      className="text-sm leading-relaxed sm:text-base"
                       style={{ color: "#a0a0a0" }}
                     >
                       {feature.description}
@@ -263,23 +265,26 @@ export default function Home() {
         </div>
 
         {/* Supported Contracts */}
-        <div className="mt-24 text-center">
+        <div className="mt-16 text-center md:mt-24">
           <h3
-            className="mb-4 text-2xl font-normal"
+            className="mb-4 text-xl font-normal sm:text-2xl"
             style={{ color: "#ffffff" }}
           >
             Supported standards
           </h3>
-          <p className="mx-auto mb-8 max-w-2xl" style={{ color: "#a0a0a0" }}>
+          <p
+            className="mx-auto mb-6 max-w-2xl text-sm sm:text-base md:mb-8"
+            style={{ color: "#a0a0a0" }}
+          >
             Deploy industry-standard smart contracts with built-in security and
             optimization
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {supportedContracts.map((contract, index) => (
               <Badge
                 key={index}
                 variant="outline"
-                className="px-3 py-1.5 text-sm font-medium"
+                className="px-2 py-1 text-xs font-medium sm:px-3 sm:py-1.5 sm:text-sm"
                 style={{
                   borderColor: "#23e99d",
                   backgroundColor: "#083322",
@@ -293,7 +298,7 @@ export default function Home() {
         </div>
 
         {/* Connection Card */}
-        <div className="mx-auto mt-16 max-w-xl">
+        <div className="mx-auto mt-12 max-w-xl md:mt-16">
           <Card
             className="shadow-sm"
             style={{
@@ -303,16 +308,19 @@ export default function Home() {
           >
             <CardHeader className="pb-4 text-center">
               <CardTitle
-                className="text-lg font-medium"
+                className="text-base font-medium sm:text-lg"
                 style={{ color: "#ffffff" }}
               >
                 Quick Connect
               </CardTitle>
-              <CardDescription style={{ color: "#a0a0a0" }}>
+              <CardDescription
+                className="text-sm sm:text-base"
+                style={{ color: "#a0a0a0" }}
+              >
                 Connect your wallet to start building
               </CardDescription>
             </CardHeader>
-            <CardContent className="mt-[-1rem] space-y-4">
+            <CardContent className="mt-[-1rem] space-y-3 sm:space-y-4">
               {!isWalletConnected ? (
                 <>
                   <Button
@@ -328,12 +336,13 @@ export default function Home() {
                     Connect Wallet
                   </Button>
                   <div
-                    className="flex items-center justify-center gap-2 text-sm"
+                    className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm"
                     style={{ color: "#a0a0a0" }}
                   >
                     <span>Supports</span>
                     <Badge
                       variant="secondary"
+                      className="text-xs"
                       style={{
                         backgroundColor: "#083322",
                         color: "#23e99d",
@@ -344,6 +353,7 @@ export default function Home() {
                     </Badge>
                     <Badge
                       variant="secondary"
+                      className="text-xs"
                       style={{
                         backgroundColor: "#083322",
                         color: "#23e99d",
@@ -367,14 +377,14 @@ export default function Home() {
                       Wallet Connected
                     </Badge>
                     <div
-                      className="rounded-lg border p-3"
+                      className="rounded-lg border p-2 sm:p-3"
                       style={{
                         backgroundColor: "#083322",
                         borderColor: "#23e99d40",
                       }}
                     >
                       <p
-                        className="font-mono text-sm"
+                        className="font-mono text-xs break-all sm:text-sm"
                         style={{ color: "#23e99d" }}
                       >
                         {walletAddress}
@@ -412,17 +422,20 @@ export default function Home() {
                     Ready to build
                   </Badge>
                   <div
-                    className="rounded-lg border p-4"
+                    className="rounded-lg border p-3 sm:p-4"
                     style={{
                       backgroundColor: "#083322",
                       borderColor: "#23e99d40",
                     }}
                   >
-                    <p className="mb-1 text-sm" style={{ color: "#a0a0a0" }}>
+                    <p
+                      className="mb-1 text-xs sm:text-sm"
+                      style={{ color: "#a0a0a0" }}
+                    >
                       Welcome back
                     </p>
                     <p
-                      className="font-mono text-sm font-medium"
+                      className="font-mono text-xs font-medium break-all sm:text-sm"
                       style={{ color: "#23e99d" }}
                     >
                       {walletAddress}
@@ -459,7 +472,7 @@ export default function Home() {
 
               {currentProcess && (
                 <div
-                  className="space-y-2 rounded-lg border p-3"
+                  className="space-y-2 rounded-lg border p-2 sm:p-3"
                   style={{
                     backgroundColor: "#083322",
                     borderColor: "#23e99d40",
@@ -467,7 +480,7 @@ export default function Home() {
                 >
                   <Progress value={50} className="h-2" />
                   <p
-                    className="text-center text-sm"
+                    className="text-center text-xs sm:text-sm"
                     style={{ color: "#23e99d" }}
                   >
                     {currentProcess}
@@ -479,7 +492,7 @@ export default function Home() {
         </div>
 
         {/* Stats */}
-        <div className="mx-auto mt-24 grid max-w-3xl grid-cols-1 gap-8 sm:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8 md:mt-24">
           {[
             {
               number: "6+",
@@ -499,7 +512,7 @@ export default function Home() {
           ].map((stat, index) => (
             <div key={index} className="text-center">
               <div
-                className={`mb-2 text-3xl font-bold ${
+                className={`mb-2 text-2xl font-bold sm:text-3xl ${
                   index === 0
                     ? "gradient-text-accent"
                     : index === 1
@@ -510,12 +523,12 @@ export default function Home() {
                 {stat.number}
               </div>
               <div
-                className="mb-1 text-lg font-medium"
+                className="mb-1 text-base font-medium sm:text-lg"
                 style={{ color: "#ffffff" }}
               >
                 {stat.label}
               </div>
-              <div className="text-sm" style={{ color: "#a0a0a0" }}>
+              <div className="text-xs sm:text-sm" style={{ color: "#a0a0a0" }}>
                 {stat.desc}
               </div>
             </div>

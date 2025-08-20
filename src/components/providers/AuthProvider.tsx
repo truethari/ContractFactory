@@ -70,9 +70,9 @@ export default function AuthProvider({
       {isLoggedIn ? (
         <>{children}</>
       ) : (
-        <div className="mx-auto flex h-full min-h-screen max-w-xl items-center justify-center">
+        <div className="mx-auto flex h-full min-h-screen items-center justify-center p-4 sm:p-6">
           <Card
-            className="min-w-xl shadow-sm"
+            className="w-full max-w-md shadow-sm sm:max-w-lg"
             style={{
               backgroundColor: "#111e17",
               borderColor: "#083322",
@@ -80,16 +80,19 @@ export default function AuthProvider({
           >
             <CardHeader className="pb-4 text-center">
               <CardTitle
-                className="text-lg font-medium"
+                className="text-base font-medium sm:text-lg"
                 style={{ color: "#ffffff" }}
               >
                 You are not logged in
               </CardTitle>
-              <CardDescription style={{ color: "#a0a0a0" }}>
+              <CardDescription
+                className="text-sm sm:text-base"
+                style={{ color: "#a0a0a0" }}
+              >
                 Connect your wallet to start building
               </CardDescription>
             </CardHeader>
-            <CardContent className="mt-[-1rem] space-y-4">
+            <CardContent className="mt-[-1rem] space-y-3 sm:space-y-4">
               {!isWalletConnected ? (
                 <>
                   <Button
@@ -105,12 +108,13 @@ export default function AuthProvider({
                     Connect Wallet
                   </Button>
                   <div
-                    className="flex items-center justify-center gap-2 text-sm"
+                    className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm"
                     style={{ color: "#a0a0a0" }}
                   >
                     <span>Supports</span>
                     <Badge
                       variant="secondary"
+                      className="text-xs"
                       style={{
                         backgroundColor: "#083322",
                         color: "#23e99d",
@@ -121,6 +125,7 @@ export default function AuthProvider({
                     </Badge>
                     <Badge
                       variant="secondary"
+                      className="text-xs"
                       style={{
                         backgroundColor: "#083322",
                         color: "#23e99d",
@@ -135,6 +140,7 @@ export default function AuthProvider({
                 <>
                   <div className="space-y-3 text-center">
                     <Badge
+                      className="text-xs sm:text-sm"
                       style={{
                         backgroundColor: "#083322",
                         color: "#23e99d",
@@ -144,14 +150,14 @@ export default function AuthProvider({
                       Wallet Connected
                     </Badge>
                     <div
-                      className="rounded-lg border p-3"
+                      className="rounded-lg border p-2 sm:p-3"
                       style={{
                         backgroundColor: "#083322",
                         borderColor: "#23e99d40",
                       }}
                     >
                       <p
-                        className="font-mono text-sm"
+                        className="font-mono text-xs break-all sm:text-sm"
                         style={{ color: "#23e99d" }}
                       >
                         {walletAddress}
@@ -180,7 +186,7 @@ export default function AuthProvider({
 
               {currentProcess && (
                 <div
-                  className="space-y-2 rounded-lg border p-3"
+                  className="space-y-2 rounded-lg border p-2 sm:p-3"
                   style={{
                     backgroundColor: "#083322",
                     borderColor: "#23e99d40",
@@ -188,7 +194,7 @@ export default function AuthProvider({
                 >
                   <Progress value={50} className="h-2" />
                   <p
-                    className="text-center text-sm"
+                    className="text-center text-xs sm:text-sm"
                     style={{ color: "#23e99d" }}
                   >
                     {currentProcess}

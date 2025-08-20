@@ -10,12 +10,12 @@ import { hyperevmMainnet, ganacheLocal } from "@/services/blockchain/networks";
 
 import type { AppKitNetwork } from "@reown/appkit-common";
 
-const projectId = "124231be92c2ac6686e0ef0110c2381c";
+const projectId = "d9c099801e27a49cfd9ea1f6bd88a379";
 
 const metadata = {
   name: "Contract Factory",
   description: "Contract Factory",
-  url: "https://172.0.0.1.com",
+  url: "https://contract-factory.tharindu.dev",
   icons: ["https://assets.reown.com/reown-profile-pic.png"],
 };
 

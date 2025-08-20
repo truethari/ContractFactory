@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import React, { useState } from "react";
 import {
   X,
   Menu,
@@ -29,7 +30,26 @@ import { useGetDeployments } from "@/hooks/deployments.hook";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Start closed on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if mobile on mount and resize
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Auto-close sidebar on mobile, auto-open on desktop
+      if (mobile) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const {
     data: deploymentsData,
@@ -66,9 +86,41 @@ export default function Dashboard() {
 
   return (
     <div className="flex min-h-screen" style={{ backgroundColor: "#000000" }}>
+      {/* Mobile Header */}
+      {isMobile && (
+        <div
+          className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b p-4 md:hidden"
+          style={{ backgroundColor: "#111e17", borderColor: "#083322" }}
+        >
+          <Link href="/" className="text-lg font-semibold text-white">
+            Contract Factory
+          </Link>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="cursor-pointer text-gray-400 transition-all hover:scale-105 hover:text-white"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
+      {/* Mobile Overlay */}
+      {isMobile && sidebarOpen && (
+        <div
+          className="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <div
-        className={`${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out`}
+        className={`${
+          isMobile
+            ? `fixed top-0 left-0 z-50 h-full w-64 transform transition-transform duration-300 ease-in-out ${
+                sidebarOpen ? "translate-x-0" : "-translate-x-full"
+              }`
+            : `${sidebarOpen ? "w-64" : "w-16"} transition-all duration-300 ease-in-out`
+        }`}
       >
         <div
           className="flex h-full flex-col border-r"
@@ -77,14 +129,16 @@ export default function Dashboard() {
           {/* Sidebar Header */}
           <div className="border-b p-4" style={{ borderColor: "#083322" }}>
             <div className="flex items-center justify-between">
-              {sidebarOpen && (
-                <h2 className="text-lg font-semibold text-white">Dashboard</h2>
+              {(sidebarOpen || isMobile) && (
+                <Link href="/" className="text-lg font-semibold text-white">
+                  Contract Factory
+                </Link>
               )}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="cursor-pointer text-gray-400 transition-all hover:scale-105 hover:text-white"
               >
-                {sidebarOpen ? (
+                {sidebarOpen || isMobile ? (
                   <X className="h-4 w-4" />
                 ) : (
                   <Menu className="h-4 w-4" />
@@ -115,7 +169,7 @@ export default function Dashboard() {
                           marginRight: sidebarOpen ? "8px" : "0",
                         }}
                       />
-                      {sidebarOpen && item.label}
+                      {(sidebarOpen || isMobile) && item.label}
                     </button>
                   </li>
                 );
@@ -124,7 +178,7 @@ export default function Dashboard() {
           </nav>
 
           {/* Sidebar Footer */}
-          {sidebarOpen && (
+          {(sidebarOpen || isMobile) && (
             <div className="border-t p-4" style={{ borderColor: "#083322" }}>
               <div className="text-xs text-gray-500">Contract Factory v1.0</div>
             </div>
@@ -133,9 +187,9 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className={`flex-1 overflow-hidden ${isMobile ? "pt-16" : ""}`}>
         <div className="h-full overflow-auto">
-          <div className="flex flex-col p-8">
+          <div className="flex flex-col p-4 sm:p-6 md:p-8">
             {isLoadingDeployments ? (
               <Card
                 style={{ backgroundColor: "#111e17", borderColor: "#083322" }}
