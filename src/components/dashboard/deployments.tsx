@@ -450,7 +450,7 @@ export default function Deployments(props: Props) {
                   </>
                 )}
 
-                {deployment.address && deployment.deployedTx && (
+                {deployment.address && (
                   <Button
                     size="sm"
                     variant="outline"
@@ -461,13 +461,13 @@ export default function Deployments(props: Props) {
                     }}
                     onClick={() =>
                       window.open(
-                        `https://explorer.hyperliquid.io/tx/${deployment.deployedTx}`,
+                        `https://hyperevmscan.io/address/${deployment.address}`,
                         "_blank",
                       )
                     }
                   >
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    View on Explorer
+                    View Contract
                   </Button>
                 )}
 

@@ -906,7 +906,7 @@ export default function Create(props: Props) {
                     }}
                   >
                     <pre
-                      className="max-h-96 overflow-auto font-mono text-xs"
+                      className="max-h-[600px] overflow-auto font-mono text-xs"
                       style={{ color: "#a0a0a0" }}
                     >
                       <code>{getPreviewCode()}</code>
