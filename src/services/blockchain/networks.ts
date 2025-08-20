@@ -21,7 +21,7 @@ export const hyperevmMainnet = {
   blockExplorers: {
     default: {
       name: "Explorer",
-      url: "https://hyperliquid.cloud.blockscout.com",
+      url: "https://hyperevmscan.io",
     },
   },
 } as const;
