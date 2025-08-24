@@ -241,6 +241,37 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Video Section */}
+        <div className="mt-16 md:mt-24">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="mb-4 text-2xl font-normal text-white sm:text-3xl">
+              Watch{" "}
+              <span className="inline-block bg-gradient-to-r from-pink-500 via-yellow-400 to-blue-500 bg-clip-text font-bold text-transparent">
+                Contract Factory
+              </span>{" "}
+              in Action
+            </h2>
+            <p
+              className="mx-auto mb-8 max-w-2xl text-base sm:text-lg"
+              style={{ color: "#a0a0a0" }}
+            >
+              See how easy it is to create and deploy smart contracts
+            </p>
+            <div
+              className="relative mx-auto aspect-video max-w-3xl overflow-hidden rounded-lg border"
+              style={{ borderColor: "#083322" }}
+            >
+              <iframe
+                src="https://www.youtube.com/embed/v7cYKHDrAtc?si=_odstzERzSBhQ4bW"
+                title="Contract Factory Demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Supported Contracts */}
         <div className="mt-16 text-center md:mt-24">
           <h3
