@@ -45,7 +45,7 @@ interface Props {
 
 export default function Deployments(props: Props) {
   const { deployments, onChangeActiveTab, refreshAll } = props;
-  const { copyToClipboard } = useAssets();
+  const { copyToClipboard, isWalletConnected, walletProvider } = useAssets();
 
   const useDeleteDeploymentMutation = useDeleteDeployment();
 
@@ -127,14 +127,36 @@ export default function Deployments(props: Props) {
   };
 
   const handleDeploy = async (id: string) => {
-    setDeployingId(id);
-    toast.info("Starting deployment...");
+    const deployment = deployments.find((d) => d.id === id);
+    if (!deployment || !deployment.abi) {
+      toast.error("Deployment not found or ABI missing");
+      return;
+    }
 
-    // Simulate deployment process
-    setTimeout(() => {
-      setDeployingId(null);
-      toast.success("Contract deployed successfully!");
-    }, 3000);
+    if (!isWalletConnected || !walletProvider) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    // Since the current system doesn't store bytecode, we need to redirect to create page
+    // or provide an alternative flow
+    toast.info(
+      "To deploy this contract, please visit the 'Create Contract' tab where you can " +
+        "recompile and deploy it with the latest settings.",
+      {
+        duration: 5000,
+        action: {
+          label: "Go to Create",
+          onClick: () => onChangeActiveTab("create"),
+        },
+      },
+    );
+
+    // Alternative: You could implement re-compilation here
+    // This would require storing the source code in the deployment record
+    // and re-running the compilation process
+
+    setDeployingId(null);
   };
 
   const handleDownloadABI = (deployment: IDeployment) => {
@@ -283,117 +305,104 @@ export default function Deployments(props: Props) {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {deployments.map((deployment) => (
           <Card
             key={deployment.id}
-            className="group transition-all duration-300 hover:shadow-2xl"
+            className="group relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
             style={{
               backgroundColor: "#111e17",
               borderColor: "#083322",
             }}
           >
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
+            {/* Status indicator */}
+            <div
+              className={`absolute top-0 left-0 h-full w-1 ${
+                deployment.status === EDeploymentStatus.DEPLOYED
+                  ? "bg-emerald-400"
+                  : deployment.status === EDeploymentStatus.COMPILED
+                    ? "bg-yellow-400"
+                    : deployment.status === EDeploymentStatus.PENDING
+                      ? "bg-blue-400"
+                      : "bg-red-400"
+              }`}
+            />
+
+            <CardContent className="p-4 pl-6">
+              {/* Header */}
+              <div className="mb-3 flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-r ${getCategoryGradient(deployment.category)}`}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${getCategoryGradient(deployment.category)} shadow-lg`}
                   >
-                    <Code className="h-6 w-6 text-white" />
+                    <Code className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <CardTitle
-                      className="text-xl font-bold"
-                      style={{ color: "#ffffff" }}
-                    >
+                    <h3 className="font-semibold text-white">
                       {deployment.name}
-                    </CardTitle>
-
-                    <div
-                      className="mt-1 flex items-center gap-2 text-sm"
-                      style={{ color: "#a0a0a0" }}
-                    >
-                      <Badge
-                        variant="outline"
-                        style={{
-                          borderColor: "#23e99d40",
-                          color: "#a0a0a0",
-                        }}
-                      >
-                        {deployment.category}
-                      </Badge>
-                    </div>
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      {deployment.category}
+                    </p>
                   </div>
                 </div>
-
                 {getStatusBadge(deployment.status)}
               </div>
-              {deployment.description && (
-                <CardDescription className="mt-2" style={{ color: "#a0a0a0" }}>
-                  {deployment.description}
-                </CardDescription>
-              )}
-            </CardHeader>
 
-            <CardContent className="flex h-full flex-col justify-end space-y-4">
-              {/* Contract Details */}
-              <div className="space-y-3">
+              {/* Description */}
+              {deployment.description && (
+                <p className="mb-3 line-clamp-2 text-xs text-gray-400">
+                  {deployment.description}
+                </p>
+              )}
+
+              {/* Contract details */}
+              <div className="mb-4 space-y-2">
                 {deployment.address && (
-                  <div
-                    className="flex items-center justify-between rounded-lg p-3"
-                    style={{ backgroundColor: "#083322" }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Hash className="h-4 w-4" style={{ color: "#a0a0a0" }} />
-                      <span
-                        className="font-mono text-sm"
-                        style={{ color: "#ffffff" }}
-                      >
-                        {deployment.address.slice(0, 10)}...
-                        {deployment.address.slice(-8)}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2 rounded-md bg-black/30 p-2">
+                    <Hash className="h-3 w-3 text-emerald-400" />
+                    <span className="font-mono text-xs text-emerald-400">
+                      {deployment.address.slice(0, 8)}...
+                      {deployment.address.slice(-6)}
+                    </span>
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="h-8 w-8 p-0"
-                      style={{ color: "#a0a0a0" }}
+                      className="ml-auto h-6 w-6 p-0 text-gray-400 hover:text-emerald-400"
                       onClick={() => copyToClipboard(deployment.address!)}
                     >
-                      <Copy className="h-4 w-4" />
+                      <Copy className="h-3 w-3" />
                     </Button>
                   </div>
                 )}
 
-                <div
-                  className="flex items-center gap-2 text-sm"
-                  style={{ color: "#a0a0a0" }}
-                >
-                  <Calendar className="h-4 w-4" />
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <Calendar className="h-3 w-3" />
                   <span>
                     Created{" "}
                     {new Date(deployment.createdAt).toLocaleDateString()}
                   </span>
                 </div>
+
+                {/* Progress bar for compiling */}
+                {deployment.status === EDeploymentStatus.PENDING && (
+                  <div className="space-y-1">
+                    <Progress value={65} className="h-1" />
+                    <p className="text-xs text-blue-400">
+                      Compiling contract...
+                    </p>
+                  </div>
+                )}
               </div>
 
-              {/* Progress Bar for Compiling */}
-              {deployment.status === EDeploymentStatus.PENDING && (
-                <div className="space-y-2">
-                  <Progress value={65} className="h-2" />
-                  <p className="text-sm" style={{ color: "#a0a0a0" }}>
-                    Compiling contract...
-                  </p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-2">
+              {/* Action buttons */}
+              <div className="space-y-2">
+                {/* Primary action */}
                 {deployment.status === EDeploymentStatus.COMPILED &&
                   deployment.abi && (
                     <Button
                       size="sm"
-                      className="transition-all duration-300"
+                      className="w-full"
                       style={{
                         backgroundColor: "#23e99d",
                         color: "#000000",
@@ -409,68 +418,17 @@ export default function Deployments(props: Props) {
                       ) : (
                         <>
                           <Rocket className="mr-2 h-4 w-4" />
-                          Deploy
+                          Deploy Contract
                         </>
                       )}
                     </Button>
                   )}
 
-                {deployment.abi && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      style={{
-                        borderColor: "#23e99d",
-                        color: "#23e99d",
-                        backgroundColor: "transparent",
-                      }}
-                      onClick={() => handleDownloadABI(deployment)}
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Download ABI
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      style={{
-                        borderColor: "#23e99d",
-                        color: "#23e99d",
-                        backgroundColor: "transparent",
-                      }}
-                      onClick={() => copyToClipboard(deployment.abi!)}
-                    >
-                      <FileCode className="mr-2 h-4 w-4" />
-                      Copy ABI
-                    </Button>
-                  </>
-                )}
-
-                {deployment.address && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    style={{
-                      borderColor: "#23e99d",
-                      color: "#23e99d",
-                      backgroundColor: "transparent",
-                    }}
-                    onClick={() =>
-                      window.open(
-                        `https://hyperevmscan.io/address/${deployment.address}`,
-                        "_blank",
-                      )
-                    }
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Contract
-                  </Button>
-                )}
-
                 {deployment.status === EDeploymentStatus.FAILED && (
                   <Button
                     size="sm"
                     variant="outline"
+                    className="w-full"
                     style={{
                       borderColor: "#dc2626",
                       color: "#fca5a5",
@@ -481,23 +439,82 @@ export default function Deployments(props: Props) {
                     }
                   >
                     <Play className="mr-2 h-4 w-4" />
-                    Retry
+                    Retry Deployment
                   </Button>
                 )}
 
-                <Button
-                  size="sm"
-                  variant="outline"
-                  style={{
-                    borderColor: "#dc2626",
-                    color: "#fca5a5",
-                    backgroundColor: "transparent",
-                  }}
-                  onClick={() => handleDeleteDeployment(deployment.id)}
-                >
-                  <Trash className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
+                {/* Secondary actions */}
+                <div className="flex gap-2">
+                  {deployment.abi && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-xs"
+                        style={{
+                          borderColor: "#23e99d40",
+                          color: "#23e99d",
+                          backgroundColor: "transparent",
+                        }}
+                        onClick={() => handleDownloadABI(deployment)}
+                      >
+                        <Download className="mr-1 h-3 w-3" />
+                        ABI
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 text-xs"
+                        style={{
+                          borderColor: "#23e99d40",
+                          color: "#23e99d",
+                          backgroundColor: "transparent",
+                        }}
+                        onClick={() => copyToClipboard(deployment.abi!)}
+                      >
+                        <FileCode className="mr-1 h-3 w-3" />
+                        Copy
+                      </Button>
+                    </>
+                  )}
+
+                  {deployment.address && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1 text-xs"
+                      style={{
+                        borderColor: "#23e99d40",
+                        color: "#23e99d",
+                        backgroundColor: "transparent",
+                      }}
+                      onClick={() =>
+                        window.open(
+                          `https://hyperevmscan.io/address/${deployment.address}`,
+                          "_blank",
+                        )
+                      }
+                    >
+                      <ExternalLink className="mr-1 h-3 w-3" />
+                      View
+                    </Button>
+                  )}
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 text-xs"
+                    style={{
+                      borderColor: "#dc262640",
+                      color: "#fca5a5",
+                      backgroundColor: "transparent",
+                    }}
+                    onClick={() => handleDeleteDeployment(deployment.id)}
+                  >
+                    <Trash className="mr-1 h-3 w-3" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

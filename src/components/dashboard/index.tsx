@@ -24,6 +24,7 @@ import Overview from "./overview";
 import SettingsTab from "./settings";
 import ActivityTab from "./activity";
 import Deployments from "./deployments";
+import ContractInteraction from "./interact";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,8 +79,8 @@ export default function Dashboard() {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "create", label: "Create Contract", icon: FileCode },
     { id: "deployments", label: "Deployments", icon: Rocket },
-    { id: "activity", label: "Activity", icon: Activity },
-    { id: "wallet", label: "Wallet", icon: Wallet },
+    { id: "interact", label: "Interact", icon: Activity },
+    { id: "activity", label: "Activity", icon: TrendingUp },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -409,6 +410,9 @@ export default function Dashboard() {
                     refreshAll={refreshAll}
                     onChangeActiveTab={handleChangeActiveTab}
                   />
+                )}
+                {activeTab === "interact" && (
+                  <ContractInteraction deployments={deploymentsData || []} />
                 )}
                 {activeTab === "activity" && <ActivityTab />}
                 {activeTab === "wallet" && <WalletTab />}

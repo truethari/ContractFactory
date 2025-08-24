@@ -44,6 +44,7 @@ export default function AuthProvider({
       const { success, message, signature } = await signMessage(reqMessage);
       if (!success || !signature) {
         toast.error("Failed to sign message. Please try again.");
+        setCurrentProcess(null);
         return;
       }
 

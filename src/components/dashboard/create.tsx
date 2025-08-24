@@ -176,14 +176,15 @@ export default function Create(props: Props) {
 
       const sourceCode = getPreviewCode();
 
+      const contractName =
+        deploymentState.contractInputs["Contract Name"] || currentContract.name;
+
       const compileResponse = await useCreateDeploymentMutation.mutateAsync({
-        name: currentContract.name,
+        name: contractName,
         category: currentContract.category || "Smart Contract",
         description: currentContract.description,
         sourceCode,
       });
-
-      console.log(compileResponse);
 
       const compilationResult = compileResponse.compilationResult;
 
