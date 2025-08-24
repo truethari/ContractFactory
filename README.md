@@ -100,7 +100,7 @@ Contract Factory supports multiple wallet providers:
 
 ## 📞 Support
 
-- **Documentation** - Coming soon
+- **Documentation** - [http://contract-factory.tharindu.dev/docs](http://contract-factory.tharindu.dev/docs)
 - **Issues** - [GitHub Issues](https://github.com/truethari/ContractFactory/issues)
 
 ---
