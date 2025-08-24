@@ -91,6 +91,10 @@ Contract Factory supports multiple wallet providers:
 - **[TanStack Query](https://tanstack.com/query)** - Data fetching
 - **[Reown AppKit](https://reown.com/)** - Wallet connection
 
+## 🔗 Related Repositories
+
+- **[Contract Factory Backend](https://github.com/truethari/ContractFactory-Backend)** - Express.js API server
+
 ## 🔒 Security
 
 - All private keys remain in your wallet
