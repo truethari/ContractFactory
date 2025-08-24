@@ -5,17 +5,16 @@ import React, { useState } from "react";
 import {
   X,
   Menu,
-  Wallet,
+  Clock,
   Rocket,
   Loader2,
+  Sparkles,
+  Settings,
   Activity,
   FileCode,
-  Settings,
+  TrendingUp,
   AlertCircle,
   LayoutDashboard,
-  Sparkles,
-  TrendingUp,
-  Clock,
 } from "lucide-react";
 
 import Create from "./create";
@@ -292,7 +291,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setActiveTab("create")}
-                    className="flex items-center rounded-xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:scale-105 hover:from-emerald-400 hover:to-emerald-500 hover:shadow-emerald-500/40"
+                    className="flex cursor-pointer items-center rounded-xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500 to-emerald-600 px-6 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all duration-200 hover:scale-105 hover:from-emerald-400 hover:to-emerald-500 hover:shadow-emerald-500/40"
                   >
                     <FileCode className="mr-2 h-4 w-4" />
                     Create Contract

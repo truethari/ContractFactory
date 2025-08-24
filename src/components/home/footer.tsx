@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import {
   Zap,
   Mail,
@@ -9,8 +10,6 @@ import {
   Rocket,
   Shield,
   Github,
-  Twitter,
-  Sparkles,
   ExternalLink,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -37,18 +36,13 @@ export default function Footer(props: Props) {
               Solidity smart contracts with zero fees and maximum security.
             </p>
             <div className="flex gap-3">
-              <a
-                href="#"
+              <Link
+                target="_blank"
+                href="https://github.com/truethari/ContractFactory"
                 className="rounded-lg border border-[#23e99d40] bg-[#083322] p-2 text-[#23e99d] transition-colors hover:bg-[#23e99d] hover:text-black"
               >
                 <Github className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="rounded-lg border border-[#23e99d40] bg-[#083322] p-2 text-[#23e99d] transition-colors hover:bg-[#23e99d] hover:text-black"
-              >
-                <Twitter className="h-4 w-4" />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -57,40 +51,28 @@ export default function Footer(props: Props) {
             <h4 className="font-semibold text-white">Features</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
+                <div className="flex items-center gap-2 transition-colors hover:text-[#23e99d]">
                   <Shield className="h-3 w-3" />
                   Smart Contract Compilation
-                </a>
+                </div>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
+                <div className="flex items-center gap-2 transition-colors hover:text-[#23e99d]">
                   <Zap className="h-3 w-3" />
                   One-Click Deployment
-                </a>
+                </div>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
+                <div className="flex items-center gap-2 transition-colors hover:text-[#23e99d]">
                   <Rocket className="h-3 w-3" />
                   Mainnet and testnet Support
-                </a>
+                </div>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
+                <div className="flex items-center gap-2 transition-colors hover:text-[#23e99d]">
                   <Users className="h-3 w-3" />
                   Open Source
-                </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -100,41 +82,26 @@ export default function Footer(props: Props) {
             <h4 className="font-semibold text-white">Resources</h4>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a
-                  href="#"
+                <Link
+                  href="/docs"
+                  target="_blank"
                   className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
                 >
                   <Globe className="h-3 w-3" />
                   Documentation
                   <ExternalLink className="h-3 w-3" />
-                </a>
+                </Link>
               </li>
+
               <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
-                  <Code className="h-3 w-3" />
-                  API Reference
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
-                >
-                  <Sparkles className="h-3 w-3" />
-                  Examples
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
+                <Link
+                  target="_blank"
+                  href="https://github.com/truethari/ContractFactory/issues"
                   className="flex items-center gap-2 transition-colors hover:text-[#23e99d]"
                 >
                   <Mail className="h-3 w-3" />
                   Support
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -174,18 +141,6 @@ export default function Footer(props: Props) {
               <span>for the Web3 community</span>
             </div>
             <div className="grid grid-cols-2 items-center gap-2 text-sm text-gray-400 md:flex md:gap-6">
-              <a
-                href="#"
-                className="w-full text-start transition-colors hover:text-[#23e99d]"
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="#"
-                className="w-full text-center whitespace-nowrap transition-colors hover:text-[#23e99d] md:text-start"
-              >
-                Terms of Service
-              </a>
               <span className="col-span-full w-full text-center whitespace-nowrap md:text-start">
                 © 2025 Contract Factory
               </span>

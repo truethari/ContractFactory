@@ -54,6 +54,7 @@ export default function Home() {
       const { success, message, signature } = await signMessage(reqMessage);
       if (!success || !signature) {
         toast.error("Failed to sign message. Please try again.");
+        setCurrentProcess(null);
         return;
       }
 
@@ -173,6 +174,7 @@ export default function Home() {
                 color: "#23e99d",
                 backgroundColor: "transparent",
               }}
+              onClick={() => (window.location.href = "/docs")}
             >
               <Globe className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">View </span>Documentation
