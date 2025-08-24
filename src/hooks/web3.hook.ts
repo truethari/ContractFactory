@@ -161,8 +161,9 @@ export function useWeb3() {
 
     // Listen for account changes
     if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts: string[]) => {
-        if (accounts.length === 0) {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        const _accounts = accounts as string[];
+        if (_accounts.length === 0) {
           disconnectWallet();
         } else {
           connectWallet();
